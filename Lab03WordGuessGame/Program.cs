@@ -50,7 +50,7 @@ namespace Lab03WordGuessGame
 
     public static void SettingsScreen()
     {
-      string path = "words.text";
+      string path = "words.txt";
       Console.WriteLine();
       Console.WriteLine("Welcome to the Settings Menu");
       Console.WriteLine("1. View Words");
@@ -71,6 +71,7 @@ namespace Lab03WordGuessGame
         }
         if (input == (char)51)
         {
+          DeleteWords(path);
         }
         if (input == (char)52)
         {
@@ -111,13 +112,12 @@ namespace Lab03WordGuessGame
       try
       {
         CheckEmptyAnswer(wordInput);
-        using (StreamWriter sr = File.AppendText(path))
+        using (StreamWriter sw = File.AppendText(path))
         {
-          sr.WriteLine(wordInput);
-          sr.Close();
+          sw.WriteLine(wordInput);
+          sw.Close();
 
           Console.WriteLine($"Your input of \"{wordInput}\" has been accepted.");
-          Console.WriteLine(File.ReadAllText(path));
         }
       }
       catch (ArgumentNullException)
@@ -136,18 +136,61 @@ namespace Lab03WordGuessGame
         SettingsScreen();
       }
     }
+
+    public static void DeleteWords(string path)
+    {
+      Console.WriteLine();
+      Console.WriteLine("What word would you like to delete?");
+      string wordInput = Console.ReadLine();
+      try
+      {
+        CheckEmptyAnswer(wordInput);
+        string tempFile = Path.GetTempFileName();
+        using (StreamReader sr = File.OpenText(path))
+        using (StreamWriter sw = File.AppendText(tempFile))
+        {
+          string currentWordSelected;
+          while (!sr.EndOfStream)
+          {
+            currentWordSelected = sr.ReadLine();
+            if (currentWordSelected != wordInput)
+            {
+              sw.WriteLine(currentWordSelected);
+            }
+          }
+          sw.Close();
+        }
+        File.Delete(path);
+        File.Move(tempFile, path);
+      }
+      catch (ArgumentNullException)
+      {
+        Console.WriteLine("Please provide an input");
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine($"Your input cannot be accepted because of:");
+        Console.WriteLine(e.Message);
+      }
+      finally
+      {
+        Console.WriteLine("Press any key to return to Settings");
+        Console.ReadKey();
+        SettingsScreen();
+      }
+    }
     public static void ViewWords(string path)
     {
+      Console.WriteLine();
       Console.WriteLine("The list of words kept are:");
       using (StreamReader sr = File.OpenText(path))
       {
-        string words;
-        while ((words = sr.ReadLine()) != null)
+        while (!sr.EndOfStream)
         {
-          Console.WriteLine(words);
+          Console.WriteLine(sr.ReadLine());
         }
       }
-      Console.WriteLine("Press any key to continue...");
+      Console.WriteLine("Press any key to return to Settings");
       Console.ReadKey();
       SettingsScreen();
     }
