@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Lab03WordGuessGame
 {
@@ -49,6 +50,7 @@ namespace Lab03WordGuessGame
 
     public static void SettingsScreen()
     {
+      string path = "words.text";
       Console.WriteLine();
       Console.WriteLine("Welcome to the Settings Menu");
       Console.WriteLine("1. View Words");
@@ -61,9 +63,11 @@ namespace Lab03WordGuessGame
         CheckSelectionInput(input, "settings");
         if (input == (char)49)
         {
+          ViewWords(path);
         }
         if (input == (char)50)
         {
+          AddWords(path);
         }
         if (input == (char)51)
         {
@@ -99,9 +103,61 @@ namespace Lab03WordGuessGame
 
     }
 
-    public static void AddWords()
+    public static void AddWords(string path)
     {
+      Console.WriteLine();
+      Console.WriteLine("What word would you like to add?");
+      string wordInput = Console.ReadLine();
+      try
+      {
+        CheckEmptyAnswer(wordInput);
+        using (StreamWriter sr = File.AppendText(path))
+        {
+          sr.WriteLine(wordInput);
+          sr.Close();
 
+          Console.WriteLine($"Your input of \"{wordInput}\" has been accepted.");
+          Console.WriteLine(File.ReadAllText(path));
+        }
+      }
+      catch (ArgumentNullException)
+      {
+        Console.WriteLine("Please provide an input");
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine($"Your input cannot be accepted because of:");
+        Console.WriteLine(e.Message);
+      }
+      finally
+      {
+        Console.WriteLine("Press any key to continue");
+        Console.ReadKey();
+        SettingsScreen();
+      }
+    }
+    public static void ViewWords(string path)
+    {
+      Console.WriteLine("The list of words kept are:");
+      using (StreamReader sr = File.OpenText(path))
+      {
+        string words;
+        while ((words = sr.ReadLine()) != null)
+        {
+          Console.WriteLine(words);
+        }
+      }
+      Console.WriteLine("Press any key to continue...");
+      Console.ReadKey();
+      SettingsScreen();
+    }
+
+    public static void CheckEmptyAnswer(string answer)
+    {
+      if (answer.Length < 1)
+      {
+        throw new ArgumentNullException();
+      }
     }
   }
 }
