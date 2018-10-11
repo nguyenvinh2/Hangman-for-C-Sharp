@@ -218,7 +218,7 @@ namespace Lab03WordGuessGame
       Console.WriteLine("Let's play Bamboozle");
       int wordLineCount = CountStoredLines(path);
       string chosenWord = GetActualWord(wordLineCount, path);
-      Console.WriteLine(chosenWord);
+      gameOverallSequence(path, chosenWord);
     }
     public static int CountStoredLines(string path)
     {
@@ -259,6 +259,77 @@ namespace Lab03WordGuessGame
       catch (Exception)
       {
         throw;
+      }
+    }
+
+    public static void gameOverallSequence(string path, string chosenWord)
+    {
+      int guessCount = 0;
+      int winCount = 0;
+      char[] guessedLetterArray = new char[26]; 
+      char[] chosenWordArray = chosenWord.ToCharArray();
+      char[] displayWordArray = new char[chosenWord.Length];
+
+      while (winCount <= chosenWord.Length)
+      {
+        Console.WriteLine();
+        InitialRendering(displayWordArray, guessCount);
+        char guessLetter = Console.ReadKey().KeyChar;
+        for (int i = 0; i < chosenWordArray.Length; i++)
+        {
+          if (char.ToLowerInvariant(guessLetter) == chosenWordArray[i])
+          {
+            displayWordArray[i] = char.ToLowerInvariant(guessLetter);
+            winCount++;
+          }
+        }
+        if (winCount == chosenWordArray.Length)
+        {
+          Console.WriteLine();
+          Console.WriteLine("You Won!");
+          winCount = chosenWordArray.Length + 1;
+        }
+        guessCount++;
+      }
+      PostGameOptions(path);
+
+    }
+
+    public static void InitialRendering(char[] displayWordArray, int count)
+    {
+      for (int i = 0; i < displayWordArray.Length; i++)
+      {
+        if (count == 0)
+        {
+          displayWordArray[i] = (char) 45;
+          Console.Write(displayWordArray[i]);
+        }
+        else
+        {
+          Console.Write(displayWordArray[i]);
+        }
+      }
+      Console.WriteLine();
+    }
+
+    public static void PostGameOptions(string path)
+    {
+      Console.WriteLine("Play Again? (Y/N)");
+      char input = Console.ReadKey().KeyChar;
+      if (char.ToLowerInvariant(input) == (char)121)
+      {
+        PlayGame(path);
+      }
+      else if (char.ToLowerInvariant(input) == (char)110)
+      {
+        Console.WriteLine();
+        Console.WriteLine("Returning to Main Menu");
+        TitleScreen();
+      }
+      else
+      {
+        Console.WriteLine();
+        Console.WriteLine("Please pick a proper option.");
       }
     }
   }
