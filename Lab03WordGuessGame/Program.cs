@@ -8,12 +8,15 @@ namespace Lab03WordGuessGame
     public static void Main(string[] args)
     {
       Console.WriteLine("Hello World!");
-      Console.WriteLine("Welcome to ");
-      Console.WriteLine();
+      Console.WriteLine("Welcome to Word Guess");
       TitleScreen();
+      Console.ReadKey();
     }
     public static void TitleScreen()
     {
+      string path = "words.txt";
+      Console.WriteLine();
+      Console.WriteLine("Main Menu");
       Console.WriteLine("Enter your selection number:");
       Console.WriteLine("1. Play Game");
       Console.WriteLine("2. Settings");
@@ -24,10 +27,11 @@ namespace Lab03WordGuessGame
         CheckSelectionInput(input, "main");
         if (input == (char) 49)
         {
+          PlayGame(path);
         }
         if (input == (char) 50)
         {
-          SettingsScreen();
+          SettingsScreen(path);
         }
         if (input == (char) 51)
         {
@@ -40,17 +44,12 @@ namespace Lab03WordGuessGame
         Console.WriteLine(e.Message);
         Console.WriteLine("Press any key to return to Main Menu");
         Console.ReadKey();
-      }
-      finally
-      {
-        Console.WriteLine();
         TitleScreen();
       }
     }
 
-    public static void SettingsScreen()
+    public static void SettingsScreen(string path)
     {
-      string path = "words.txt";
       Console.WriteLine();
       Console.WriteLine("Welcome to the Settings Menu");
       Console.WriteLine("1. View Words");
@@ -75,6 +74,7 @@ namespace Lab03WordGuessGame
         }
         if (input == (char)52)
         {
+          TitleScreen();
         }
       }
       catch (Exception e)
@@ -87,10 +87,9 @@ namespace Lab03WordGuessGame
       finally
       {
         Console.WriteLine();
-        SettingsScreen();
+        SettingsScreen(path);
       }
     }
-
     public static void CheckSelectionInput(char input, string menu)
     {
       if (menu == "main" && input != (char)49 && input != (char)50 && input != (char)51)
@@ -103,12 +102,11 @@ namespace Lab03WordGuessGame
       }
 
     }
-
     public static void AddWords(string path)
     {
       Console.WriteLine();
-      Console.WriteLine("What word would you like to add?");
-      string wordInput = Console.ReadLine();
+      Console.WriteLine("What word would you like to add (capital letters not required)?");
+      string wordInput = Console.ReadLine().ToLower();
       try
       {
         CheckEmptyAnswer(wordInput);
@@ -133,17 +131,17 @@ namespace Lab03WordGuessGame
       {
         Console.WriteLine("Press any key to continue");
         Console.ReadKey();
-        SettingsScreen();
+        SettingsScreen(path);
       }
     }
-
     public static void DeleteWords(string path)
     {
       Console.WriteLine();
-      Console.WriteLine("What word would you like to delete?");
-      string wordInput = Console.ReadLine();
+      Console.WriteLine("What word would you like to delete (capital letters not required)?");
+      string wordInput = Console.ReadLine().ToLower();
       try
       {
+        int count = 0;
         CheckEmptyAnswer(wordInput);
         string tempFile = Path.GetTempFileName();
         using (StreamReader sr = File.OpenText(path))
@@ -157,11 +155,23 @@ namespace Lab03WordGuessGame
             {
               sw.WriteLine(currentWordSelected);
             }
+            if (currentWordSelected == wordInput)
+            {
+              count = 1;
+            }
           }
           sw.Close();
         }
         File.Delete(path);
         File.Move(tempFile, path);
+        if (count == 0)
+        {
+          Console.WriteLine($"The word \"{wordInput}\" could not be found");
+        }
+        else
+        {
+          Console.WriteLine($"You word of \"{wordInput}\" has successfully been deleted");
+        }
       }
       catch (ArgumentNullException)
       {
@@ -176,7 +186,7 @@ namespace Lab03WordGuessGame
       {
         Console.WriteLine("Press any key to return to Settings");
         Console.ReadKey();
-        SettingsScreen();
+        SettingsScreen(path);
       }
     }
     public static void ViewWords(string path)
@@ -192,14 +202,63 @@ namespace Lab03WordGuessGame
       }
       Console.WriteLine("Press any key to return to Settings");
       Console.ReadKey();
-      SettingsScreen();
+      SettingsScreen(path);
     }
-
     public static void CheckEmptyAnswer(string answer)
     {
       if (answer.Length < 1)
       {
         throw new ArgumentNullException();
+      }
+    }
+
+    public static void PlayGame(string path)
+    {
+      Console.WriteLine();
+      Console.WriteLine("Let's play Bamboozle");
+      int wordLineCount = CountStoredLines(path);
+      string chosenWord = GetActualWord(wordLineCount, path);
+      Console.WriteLine(chosenWord);
+    }
+    public static int CountStoredLines(string path)
+    {
+      int countLines = 0;
+      try
+      {
+        using (StreamReader sr = File.OpenText(path))
+        {
+          while (sr.ReadLine() != null)
+          {
+            countLines++;
+          }
+          return countLines;
+        }
+      }
+      catch(Exception)
+      {
+        throw;
+      }
+    }
+
+    public static string GetActualWord(int wordLineCount, string path)
+    {
+      string chosenWord = "";
+      Random rand = new Random();
+      int selectWordNumber = rand.Next(1, wordLineCount+1);
+      try
+      {
+        using (StreamReader sr = File.OpenText(path))
+        {
+          for (int i = 0; i<selectWordNumber; i++)
+          {
+            chosenWord = sr.ReadLine();
+          }
+          return chosenWord;
+        }
+      }
+      catch (Exception)
+      {
+        throw;
       }
     }
   }
