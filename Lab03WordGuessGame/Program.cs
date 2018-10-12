@@ -265,37 +265,31 @@ namespace Lab03WordGuessGame
     public static void gameOverallSequence(string path, string chosenWord)
     {
       int guessCount = 0;
-      int winCount = 0;
-      char[] guessedLetterArray = new char[26]; 
+      bool winGame = false;
+      char[] guessedLetterArray = new char[50]; 
       char[] chosenWordArray = chosenWord.ToCharArray();
       char[] displayWordArray = new char[chosenWord.Length];
 
-      while (winCount <= chosenWord.Length)
+      while (winGame == false)
       {
         Console.WriteLine();
-        InitialRendering(displayWordArray, guessCount);
+        WordRendering(displayWordArray, guessCount);
         char guessLetter = Console.ReadKey().KeyChar;
         for (int i = 0; i < chosenWordArray.Length; i++)
         {
           if (char.ToLowerInvariant(guessLetter) == chosenWordArray[i])
           {
             displayWordArray[i] = char.ToLowerInvariant(guessLetter);
-            winCount++;
           }
         }
-        if (winCount == chosenWordArray.Length)
-        {
-          Console.WriteLine();
-          Console.WriteLine("You Won!");
-          winCount = chosenWordArray.Length + 1;
-        }
+        LetterGuessRendering(guessedLetterArray, guessLetter);
+        winGame = didWinGame(displayWordArray);
         guessCount++;
       }
       PostGameOptions(path);
-
     }
 
-    public static void InitialRendering(char[] displayWordArray, int count)
+    public static void WordRendering(char[] displayWordArray, int count)
     {
       for (int i = 0; i < displayWordArray.Length; i++)
       {
@@ -312,6 +306,57 @@ namespace Lab03WordGuessGame
       Console.WriteLine();
     }
 
+    public static bool didWinGame(char[] wordArray)
+    {
+      int trackWord = 0;
+      for (int i = 0; i < wordArray.Length; i++)
+      {
+        if (wordArray[i] == (char)45)
+        {
+          trackWord++;
+        }
+
+        if (i == wordArray.Length - 1 && trackWord == 0)
+        {
+          Console.WriteLine();
+          WordRendering(wordArray, 1);
+          Console.WriteLine("You Won!");
+          Console.WriteLine("For a full feature game, go to:");
+          Console.WriteLine("https://nguyenvinh2.github.io/Sandman/");
+          return true;
+        }
+      }
+      return false;
+    }
+
+    public static void LetterGuessRendering(char[] letterArray, char letterGuess)
+    {
+      int tracker = 0;
+      for (int i = 0; i < letterArray.Length; i++)
+      {
+        if (letterGuess == letterArray[i])
+        {
+          tracker++;
+        }
+      }
+      if (tracker == 0)
+      {
+        for (int i = 0; i < letterArray.Length; i++)
+        {
+          if (letterArray[i] == (char) 0)
+          {
+            letterArray[i] = letterGuess;
+            break;
+          }
+        }
+      }
+      Console.WriteLine();
+      Console.Write("Letters guessed are: ");
+      for (int i = 0; i < letterArray.Length; i++)
+      {
+        Console.Write($"{letterArray[i]} ");
+      }
+    }
     public static void PostGameOptions(string path)
     {
       Console.WriteLine("Play Again? (Y/N)");
