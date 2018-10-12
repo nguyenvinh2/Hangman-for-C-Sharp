@@ -21,19 +21,22 @@ namespace Lab03WordGuessGame
       Console.WriteLine("1. Play Game");
       Console.WriteLine("2. Settings");
       Console.WriteLine("3. Exit");
-      char input = Console.ReadKey().KeyChar;
+      string input = Console.ReadLine();
       try
       {
         CheckSelectionInput(input, "main");
-        if (input == (char) 49)
+        if (input == "1")
         {
+          Console.WriteLine();
+          Console.WriteLine("You selected Play Game. Press any key to continue");
+          Console.ReadKey();
           PlayGame(path);
         }
-        if (input == (char) 50)
+        if (input == "2")
         {
           SettingsScreen(path);
         }
-        if (input == (char) 51)
+        if (input == "3")
         {
           Environment.Exit(0);
         }
@@ -56,23 +59,23 @@ namespace Lab03WordGuessGame
       Console.WriteLine("2. Add Word");
       Console.WriteLine("3. Delete Word");
       Console.WriteLine("4. Back to Main");
-      char input = Console.ReadKey().KeyChar;
+      string input = Console.ReadLine();
       try
       {
         CheckSelectionInput(input, "settings");
-        if (input == (char)49)
+        if (input == "1")
         {
           ViewWords(path);
         }
-        if (input == (char)50)
+        if (input == "2")
         {
           AddWords(path);
         }
-        if (input == (char)51)
+        if (input == "3")
         {
           DeleteWords(path);
         }
-        if (input == (char)52)
+        if (input == "4")
         {
           TitleScreen();
         }
@@ -90,13 +93,13 @@ namespace Lab03WordGuessGame
         SettingsScreen(path);
       }
     }
-    public static void CheckSelectionInput(char input, string menu)
+    public static void CheckSelectionInput(string input, string menu)
     {
-      if (menu == "main" && input != (char)49 && input != (char)50 && input != (char)51)
+      if (menu == "main" && input != "1" && input != "2" && input != "3")
       {
         throw new Exception("Sorry, but that is an invalid selection. Your options are 1, 2, or 3");
       }
-      if (menu == "settings" && input != (char) 49 && input != (char) 50 && input != (char) 51 && input!= (char) 52)
+      if (menu == "settings" && input != "1" && input != "2" && input != "3" && input!= "4")
       {
         throw new Exception("Sorry, but that is an invalid selection. Your options are 1, 2, 3, or 4");
       }
@@ -215,6 +218,7 @@ namespace Lab03WordGuessGame
     {
       Console.WriteLine();
       Console.WriteLine("Let's play Bamboozle");
+      Console.WriteLine("Enter any character from your keyboard to guess the word hidden below:");
       int wordLineCount = CountStoredLines(path);
       string chosenWord = GetActualWord(wordLineCount, path);
       gameOverallSequence(path, chosenWord);
