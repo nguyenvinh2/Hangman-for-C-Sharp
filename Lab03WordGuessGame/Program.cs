@@ -211,7 +211,6 @@ namespace Lab03WordGuessGame
         throw new ArgumentNullException();
       }
     }
-
     public static void PlayGame(string path)
     {
       Console.WriteLine();
@@ -334,7 +333,7 @@ namespace Lab03WordGuessGame
       int tracker = 0;
       for (int i = 0; i < letterArray.Length; i++)
       {
-        if (letterGuess == letterArray[i])
+        if (char.ToLowerInvariant(letterGuess) == letterArray[i])
         {
           tracker++;
         }
@@ -345,7 +344,7 @@ namespace Lab03WordGuessGame
         {
           if (letterArray[i] == (char) 0)
           {
-            letterArray[i] = letterGuess;
+            letterArray[i] = char.ToLowerInvariant(letterGuess);
             break;
           }
         }
