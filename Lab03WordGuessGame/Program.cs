@@ -76,7 +76,8 @@ namespace Lab03WordGuessGame
       Console.WriteLine("1. View Words");
       Console.WriteLine("2. Add Word");
       Console.WriteLine("3. Delete Word");
-      Console.WriteLine("4. Back to Main");
+      Console.WriteLine("4. Clear Word List");
+      Console.WriteLine("5. Back to Main");
       string input = Console.ReadLine();
       try
       {
@@ -84,16 +85,24 @@ namespace Lab03WordGuessGame
         if (input == "1")
         {
           ViewWords(path);
+          Console.WriteLine("Press any key to return to the Settings menu...");
+          Console.ReadKey();
+          Console.WriteLine();
         }
         if (input == "2")
         {
-          AddWords(path);
+          AskForWord(path, "add");
         }
         if (input == "3")
         {
-          DeleteWords(path);
+          AskForWord(path, "remove");
         }
         if (input == "4")
+        {
+          DeleteWordFile(path);
+          Console.WriteLine("All your stored words have successfully been deleted");
+        }
+        if (input == "5")
         {
           TitleScreen();
         }
@@ -107,7 +116,6 @@ namespace Lab03WordGuessGame
       }
       finally
       {
-        Console.WriteLine();
         SettingsScreen(path);
       }
     }
@@ -126,11 +134,33 @@ namespace Lab03WordGuessGame
       {
         throw new Exception("Sorry, but that is an invalid selection. Your options are 1, 2, or 3");
       }
-      if (menu == "settings" && input != "1" && input != "2" && input != "3" && input!= "4")
+      if (menu == "settings" && input != "1" && input != "2" && input != "3" && input!= "4" && input != "5")
       {
-        throw new Exception("Sorry, but that is an invalid selection. Your options are 1, 2, 3, or 4");
+        throw new Exception("Sorry, but that is an invalid selection. Your options are 1, 2, 3, 4, or 5");
       }
 
+    }
+    /// <summary>
+    /// asks user for input
+    /// </summary>
+    /// <param name="path">same variable as before
+    /// </param>
+    public static void AskForWord(string path, string action)
+    {
+      string wordInput;
+      Console.WriteLine();
+      if (action == "add")
+      {
+        Console.WriteLine("What word would you like to add (capital letters not required)?");
+        wordInput = Console.ReadLine().ToLower();
+        AddWordstoFile(path, wordInput);
+      }
+      else if (action == "remove")
+      {
+        Console.WriteLine("What word would you like to delete (capital letters not required)?");
+        wordInput = Console.ReadLine().ToLower();
+        DeleteWords(path, wordInput);
+      }
     }
     /// <summary>
     /// uses streamwriter to add in text to words.text file
@@ -138,12 +168,10 @@ namespace Lab03WordGuessGame
     /// does reject empty inputs and throws nullexception
     /// also have generic exception to catch any error that is missed
     /// </summary>
-    /// <param name="path">same variable as before</param>
-    public static void AddWords(string path)
+    /// <param name="path"></param>
+    /// <param name="wordInput">user input</param>
+    public static void AddWordstoFile(string path, string wordInput)
     {
-      Console.WriteLine();
-      Console.WriteLine("What word would you like to add (capital letters not required)?");
-      string wordInput = Console.ReadLine().ToLower();
       try
       {
         CheckEmptyAnswer(wordInput);
@@ -164,12 +192,6 @@ namespace Lab03WordGuessGame
         Console.WriteLine($"Your input cannot be accepted because of:");
         Console.WriteLine(e.Message);
       }
-      finally
-      {
-        Console.WriteLine("Press any key to continue");
-        Console.ReadKey();
-        SettingsScreen(path);
-      }
     }
     /// <summary>
     /// gets input from user about what word to delete from "path"
@@ -179,11 +201,8 @@ namespace Lab03WordGuessGame
     /// does input check similar to add
     /// </summary>
     /// <param name="path"></param>
-    public static void DeleteWords(string path)
+    public static void DeleteWords(string path, string wordInput)
     {
-      Console.WriteLine();
-      Console.WriteLine("What word would you like to delete (capital letters not required)?");
-      string wordInput = Console.ReadLine().ToLower();
       try
       {
         int count = 0;
@@ -215,7 +234,7 @@ namespace Lab03WordGuessGame
         }
         else
         {
-          Console.WriteLine($"You word of \"{wordInput}\" has successfully been deleted");
+          Console.WriteLine($"Your word of \"{wordInput}\" has successfully been deleted");
         }
       }
       catch (ArgumentNullException)
@@ -227,12 +246,23 @@ namespace Lab03WordGuessGame
         Console.WriteLine($"Your input cannot be accepted because of:");
         Console.WriteLine(e.Message);
       }
-      finally
+    }
+    /// <summary>
+    /// this is a simple file delete for stored words
+    /// wipes out memory of all words kept
+    /// </summary>
+    /// <param name="path"></param>
+    public static void DeleteWordFile(string path)
+    {
+      try
       {
-        Console.WriteLine("Press any key to return to Settings");
-        Console.ReadKey();
-        SettingsScreen(path);
+        File.Delete(path);
       }
+      catch(Exception e)
+      {
+        Console.WriteLine(e.Message);
+      }
+
     }
     /// <summary>
     /// this one just reads the text file from "path" using StreamReader
@@ -241,7 +271,6 @@ namespace Lab03WordGuessGame
     /// <param name="path"></param>
     public static void ViewWords(string path)
     {
-      Console.WriteLine();
       Console.WriteLine("The list of words kept are:");
       using (StreamReader sr = File.OpenText(path))
       {
@@ -250,9 +279,6 @@ namespace Lab03WordGuessGame
           Console.WriteLine(sr.ReadLine());
         }
       }
-      Console.WriteLine("Press any key to return to Settings");
-      Console.ReadKey();
-      SettingsScreen(path);
     }
     /// <summary>
     /// simple input check for error throw
@@ -280,8 +306,8 @@ namespace Lab03WordGuessGame
       Console.WriteLine();
       Console.WriteLine("Let's play Bamboozle");
       Console.WriteLine("Enter any character from your keyboard to guess the word hidden below:");
-      int wordLineCount = CountStoredLines(path);
-      string chosenWord = GetActualWord(wordLineCount, path);
+      int randomLine = GetRandomLine(path);
+      string chosenWord = GetActualWord(randomLine, path);
       gameOverallSequence(path, chosenWord);
     }
     /// <summary>
@@ -289,7 +315,7 @@ namespace Lab03WordGuessGame
     /// </summary>
     /// <param name="path"></param>
     /// <returns>rnumber of words in text file</returns>
-    public static int CountStoredLines(string path)
+    public static int GetRandomLine(string path)
     {
       int countLines = 0;
       try
@@ -300,7 +326,9 @@ namespace Lab03WordGuessGame
           {
             countLines++;
           }
-          return countLines;
+          Random rand = new Random();
+          int selectWordNumber = rand.Next(1, countLines + 1);
+          return selectWordNumber;
         }
       }
       catch(Exception)
@@ -314,11 +342,9 @@ namespace Lab03WordGuessGame
     /// <param name="wordLineCount">how many words avaiable to choose</param>
     /// <param name="path"></param>
     /// <returns>the chosen word for the game</returns>
-    public static string GetActualWord(int wordLineCount, string path)
+    public static string GetActualWord(int selectWordNumber, string path)
     {
       string chosenWord = "";
-      Random rand = new Random();
-      int selectWordNumber = rand.Next(1, wordLineCount+1);
       try
       {
         using (StreamReader sr = File.OpenText(path))
@@ -365,19 +391,34 @@ namespace Lab03WordGuessGame
       {
         Console.WriteLine();
         WordRendering(displayWordArray, guessCount);
+        Console.WriteLine("Guess a Letter");
         char guessLetter = Console.ReadKey().KeyChar;
-        for (int i = 0; i < chosenWordArray.Length; i++)
-        {
-          if (char.ToLowerInvariant(guessLetter) == chosenWordArray[i])
-          {
-            displayWordArray[i] = char.ToLowerInvariant(guessLetter);
-          }
-        }
+        displayWordArray = CompareGuess(chosenWordArray, guessLetter, displayWordArray);
         LetterGuessRendering(guessedLetterArray, guessLetter);
-        winGame = didWinGame(displayWordArray);
+        winGame = DidWinGame(displayWordArray, chosenWordArray);
         guessCount++;
       }
       PostGameOptions(path);
+    }
+    /// <summary>
+    /// compares input to the answer array
+    /// if matches, updates the displayWord with that letter
+    /// to display onto the console
+    /// </summary>
+    /// <param name="chosenWord">the answer</param>
+    /// <param name="guessLetter">the input</param>
+    /// <param name="displayWord">what is being displayed</param>
+    /// <returns></returns>
+    public static char[] CompareGuess(char[] chosenWord, char guessLetter, char[] displayWord)
+    {
+      for (int i = 0; i < chosenWord.Length; i++)
+      {
+        if (char.ToLowerInvariant(guessLetter) == chosenWord[i])
+        {
+          displayWord[i] = char.ToLowerInvariant(guessLetter);
+        }
+      }
+      return displayWord;
     }
     /// <summary>
     /// reveals the word onto the console as the user starts guessing the right letters
@@ -407,17 +448,17 @@ namespace Lab03WordGuessGame
     /// </summary>
     /// <param name="wordArray">the arrray correctly guess letters</param>
     /// <returns></returns>
-    public static bool didWinGame(char[] wordArray)
+    public static bool DidWinGame(char[] wordArray, char[] answerArray)
     {
       int trackWord = 0;
       for (int i = 0; i < wordArray.Length; i++)
       {
-        if (wordArray[i] == (char)45)
+        if (wordArray[i] == answerArray[i])
         {
           trackWord++;
         }
 
-        if (i == wordArray.Length - 1 && trackWord == 0)
+        if (trackWord == answerArray.Length)
         {
           Console.WriteLine();
           WordRendering(wordArray, 1);
@@ -494,6 +535,7 @@ namespace Lab03WordGuessGame
       {
         Console.WriteLine();
         Console.WriteLine("Please pick a proper option.");
+        PostGameOptions(path);
       }
     }
   }
