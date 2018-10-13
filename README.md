@@ -32,9 +32,15 @@ While playing game, console will automatically accept and process only one chara
 Outside the game, user will have to specify the option and confirm it via the enter key.
 
 
-The User will have to create his/her own list of words via the Add Word Option in the Settings Menu. The file will be created where it was executed. The location is likely to be @ Lab03-Word-Guess-Game\Lab03WordGuessGame\bin\Debug\netcoreapp2.1\words.txt
+The location of the stored Word List assumes the location of program execution is @ Lab03-Word-Guess-Game\Lab03WordGuessGame\bin\Debug\netcoreapp2.1\
 
-The words.txt will not exist until it is initiated by Adding a Word!
+The name of the store Word List is words.txt
+
+Thus the path is specified as ../../../../words.txt, which is in the same location as the Lab03WordGuessGAme.sln.
+
+If the user's settings is completely different, the path variable can be adjusted in the TitleScreen() method in Program.cs
+
+If the words.txt does not exist, it can be initiated by Adding a Word!
 
 ## Testing
 

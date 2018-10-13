@@ -23,7 +23,7 @@ namespace Lab03WordGuessGame
     /// </summary>
     public static void TitleScreen()
     {
-      string path = "words.txt";
+      string path = "../../../../words.txt";
       Console.WriteLine();
       Console.WriteLine("Main Menu");
       Console.WriteLine("Enter your selection number:");
