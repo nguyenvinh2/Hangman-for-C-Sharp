@@ -41,10 +41,15 @@ The words.txt will not exist until it is initiated by Adding a Word!
 XUnit is included and tests the following:
 
 Test that a file can be created
+
 Test that a file can be updated
+
 Test that a file can be deleted
+
 Test that a word can be added to a file
+
 Test that all words can be retrieved from file
+
 Test that the letter guessed will be compared to the answer and be rendered appropriately
 
 ## Result
