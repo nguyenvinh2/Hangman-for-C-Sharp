@@ -11,6 +11,7 @@ V1.0 - 10/12/2018 Basic Functionality w/ Testing Unit
 ## Requirements
 
 Visual Studios 2017 or equivalent C# IDE
+
 .NET Core 2.1 SDK
 
 ## Instructions
@@ -38,7 +39,7 @@ The name of the store Word List is words.txt
 
 Thus the path is specified as ../../../../words.txt, which is in the same location as the Lab03WordGuessGAme.sln.
 
-If the user's settings is completely different, the path variable can be adjusted in the TitleScreen() method in Program.cs
+If the user's settings is completely different (i.e. not using Visual Studios 2017), the path variable can be adjusted in the TitleScreen() method in Program.cs. Change ../../../../words.txt to just word.txt to relocate the path back to the location of program execution.
 
 If the words.txt does not exist, it can be initiated by Adding a Word!
 
