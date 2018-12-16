@@ -1,8 +1,8 @@
-# Lab03-Word-Guess-Game
+# Hangman
 
-## Word Guess Game
+## Intro
 
-This is a basic C# Console Application for a generic hang man game call Bamboozle. Basic functions randomly selects a word from a stored list for the user to guess. User also has the ability to view the list of words, add or delete a specify word, or delete the entire list entirely.
+This is a basic C# Console Application for a generic hang man game. Basic functions randomly selects a word from a stored list for the user to guess. User also has the ability to view the list of words, add or delete a specify word, or delete the entire list entirely.
 
 ## Version
 
